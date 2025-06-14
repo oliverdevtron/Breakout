@@ -28,6 +28,33 @@ BLUE    = (0, 0, 255)
 YELLOW  = (255, 255, 0)
 ORANGE  = (255, 165, 0)
 
+# Schwierigkeitsgrade
+difficulty_settings = {
+    1: {"paddle_width": 120, "paddle_speed": 6, "ball_speed": 4, "brick_rows": 4},
+    2: {"paddle_width": 100, "paddle_speed": 7, "ball_speed": 5, "brick_rows": 5},
+    3: {"paddle_width": 80,  "paddle_speed": 8, "ball_speed": 6, "brick_rows": 6},
+}
+difficulty = 1
+
+def apply_difficulty():
+    """Setzt Parameter entsprechend dem gewählten Schwierigkeitsgrad."""
+    global paddle_width, paddle_speed, brick_rows_base
+    global ball_speed_x, ball_speed_y
+
+    settings = difficulty_settings[difficulty]
+    paddle_width = settings["paddle_width"]
+    paddle_speed = settings["paddle_speed"]
+    brick_rows_base = settings["brick_rows"]
+
+    # Reset paddle size and position
+    paddle_rect.width = paddle_width
+    paddle_rect.centerx = WIDTH // 2
+    paddle_rect.bottom = HEIGHT - 20
+
+    base_speed = settings["ball_speed"]
+    ball_speed_x = base_speed * random.choice([-1, 1])
+    ball_speed_y = -base_speed
+
 # Schriftart
 try:
     font = pygame.font.Font(None, 36)
@@ -39,8 +66,8 @@ except pygame.error as e:
 # Clock
 clock = pygame.time.Clock()
 
-# Spielzustände: "start" (Countdown), "playing" und "gameover"
-state = "start"
+# Spielzustände: "difficulty" (Auswahl), "start" (Countdown), "playing" und "gameover"
+state = "difficulty"
 start_sequence = ["Prepare for liftoff in 3...", "Prepare for liftoff in 2...", "Prepare for liftoff in 1...", "BLAST OFF!"]
 start_display_index = 0 # Index for the current message
 start_time = 0 # Timestamp when the current message started
@@ -63,7 +90,7 @@ ball_speed_y = -4
 ball_rect = pygame.Rect(0, 0, ball_radius * 2, ball_radius * 2) # Initialize ball_rect once
 
 # Brick-Spezifikationen
-brick_rows = 5
+brick_rows_base = 5
 brick_columns = 8
 brick_width = 60
 brick_height = 20
@@ -81,7 +108,8 @@ def create_bricks():
     global bricks, brick_rects
     bricks = []
     brick_rects = []
-    for row in range(brick_rows):
+    rows = brick_rows_base + level - 1
+    for row in range(rows):
         for col in range(brick_columns):
             x = brick_offset_left + col * (brick_width + brick_padding)
             y = brick_offset_top + row * (brick_height + brick_padding)
@@ -101,20 +129,14 @@ def reset_game():
     start_display_index = 0
     start_time = time.time() # Reset start timer
 
-    paddle_rect.centerx = WIDTH // 2 # Use centerx for centering
-    paddle_rect.bottom = HEIGHT - 20 # Position relative to bottom
-
+    apply_difficulty()
     ball_x = paddle_rect.centerx
     ball_y = paddle_rect.top - ball_radius - 1
-    # Ensure ball speed always starts reasonably
-    base_speed = 4
-    ball_speed_x = base_speed * random.choice([-1, 1]) # Random initial horizontal direction
-    ball_speed_y = -base_speed # Always start moving up
 
     create_bricks()
 
 # --- Initial Setup ---
-reset_game() # Call reset_game initially to set up everything including bricks
+apply_difficulty()
 
 # --- Main Game Loop ---
 running = True
@@ -130,9 +152,19 @@ while running:
             # Handle single-press actions here
             if state == "gameover":
                 if event.key == pygame.K_r:
-                    reset_game()
+                    state = "difficulty"
                 elif event.key == pygame.K_q:
                     running = False
+            elif state == "difficulty":
+                if event.key == pygame.K_1:
+                    difficulty = 1
+                    reset_game()
+                elif event.key == pygame.K_2:
+                    difficulty = 2
+                    reset_game()
+                elif event.key == pygame.K_3:
+                    difficulty = 3
+                    reset_game()
             # Add other keydown events if needed (e.g., pause)
 
 
@@ -153,6 +185,8 @@ while running:
             ball_speed_y = -4
         # else: still in countdown, logic handled below in drawing section
 
+    elif state == "difficulty":
+        pass
     elif state == "playing":
         # --- Paddle-Bewegung ---
         if keys[pygame.K_LEFT] and paddle_rect.left > 0:
@@ -270,7 +304,12 @@ while running:
     # --- Zeichnen ---
     SCREEN.fill(BLACK) # Clear screen first
 
-    if state == "start":
+    if state == "difficulty":
+        diff_text = font.render("Select difficulty: 1=Easy 2=Medium 3=Hard", True, WHITE)
+        SCREEN.blit(diff_text, ((WIDTH - diff_text.get_width()) // 2,
+                                (HEIGHT - diff_text.get_height()) // 2))
+
+    elif state == "start":
         # Draw paddle and ball even during countdown
         pygame.draw.rect(SCREEN, WHITE, paddle_rect)
         # Use the updated ball_rect for drawing
