@@ -360,7 +360,11 @@ const Input = {
     window.addEventListener('keydown', (e) => {
       if (!this.keys[e.code]) this.justPressed[e.code] = true;
       this.keys[e.code] = true;
-      if (['ArrowLeft', 'ArrowRight', 'Space', 'KeyP', 'Escape'].includes(e.code)) {
+      // Switch back to keyboard control when movement keys are pressed
+      if (['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'].includes(e.code)) {
+        this.useMousePaddle = false;
+      }
+      if (['ArrowLeft', 'ArrowRight', 'Space', 'KeyP', 'Escape', 'KeyA', 'KeyD'].includes(e.code)) {
         e.preventDefault();
       }
     });
