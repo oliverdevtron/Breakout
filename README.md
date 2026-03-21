@@ -1,91 +1,80 @@
-# Neon Breakout
+# Breakout — Neon Arcade
 
-A modern Breakout game with neon synthwave aesthetics, built with pure HTML5 Canvas and vanilla JavaScript. No dependencies, no build tools - just open and play.
-
-**Original concept**: Breakout v1.0 by [oliver@devtron.pro](mailto:oliver@devtron.pro)
-
-## Features
-
-- **5 unique levels** with distinct brick layouts and increasing difficulty
-- **Multi-HP bricks** that take multiple hits to destroy
-- **Power-up system**: Multi-Ball, Wide Paddle, Speed Ball, Extra Life
-- **Combo scoring**: Consecutive brick hits without paddle touches build a score multiplier
-- **Particle effects**: Brick explosions, ball trails, paddle sparks
-- **Procedural audio**: All sound effects generated with Web Audio API (no files needed)
-- **3 lives** with visual heart indicators
-- **Pause/resume** with P or Escape
-- **High score tracking** (in-memory, per session)
-- **Neon/synthwave aesthetic** with glow effects, animated starfield, and grid background
-- **Responsive input**: Keyboard, mouse, and touch support
-- **Fixed-timestep physics** at 120Hz for consistent gameplay
+A modern Breakout game built with HTML5 Canvas and vanilla JavaScript. Features a neon/synthwave aesthetic, particle effects, power-ups, procedural audio, and 5 unique level layouts.
 
 ## How to Run
 
-Open `index.html` in any modern browser. That's it.
+1. Clone the repository
+2. Open `index.html` in any modern browser
+3. No build tools, dependencies, or servers required
 
+Alternatively, serve with any static file server:
 ```bash
-# Option 1: Just open the file
-open index.html
-# or double-click index.html in your file manager
-
-# Option 2: Local server (if you prefer)
 python3 -m http.server 8000
-# then visit http://localhost:8000
+# Then open http://localhost:8000
 ```
 
 ## Controls
 
 | Input | Action |
-|---|---|
-| Arrow Keys (← →) | Move paddle |
-| A / D | Move paddle (alternative) |
-| Mouse / Touch | Move paddle to cursor position |
+|-------|--------|
+| Arrow Keys / A,D | Move paddle left/right |
+| Mouse | Move paddle (follows cursor) |
 | P / Escape | Pause / Resume |
-| Click / Space / Enter | Start game, navigate menus |
+| Click / Space / Enter | Start game, advance menus |
 
-## Game Rules
+Touch controls are supported for mobile devices.
 
-1. **Break all bricks** to advance to the next level.
-2. **Don't let the ball fall** below the paddle - you lose a life.
-3. **Catch power-ups** that drop from broken bricks for bonuses.
-4. **Build combos** by hitting bricks consecutively without the ball touching the paddle. Every 3 hits increases the score multiplier by 0.5x.
-5. **Complete all 5 levels** to win.
+## Features
 
-## Levels
+### Gameplay
+- **5 unique level layouts**: Classic, Diamond, Fortress, Zigzag, and Pyramid — cycling with increasing difficulty
+- **Power-up system**: Multi-Ball, Wide Paddle, Slow Ball, Extra Life — dropping randomly from broken bricks
+- **Combo scoring**: Hit multiple bricks without the ball touching the paddle to build a score multiplier
+- **3 lives** with visual heart indicators
+- **Pause/resume** functionality
 
-1. **INITIATION** - Classic rows, warm-up level
-2. **DIAMOND** - Diamond formation with reinforced center
-3. **FORTRESS** - Walled structure requiring precision
-4. **CHECKMATE** - Checkerboard with tough intersections
-5. **GAUNTLET** - Dense 8-row endurance test
+### Audio
+- Fully procedural sound effects via Web Audio API — no external audio files
+- Unique sounds for brick breaks, paddle hits, wall bounces, power-ups, combos, level complete, and game over
 
-## Power-Ups
+### Visuals
+- Neon/synthwave color palette with glow effects
+- Gradient bricks with hit-point indicators for multi-hit bricks
+- Particle explosions on brick destruction
+- Ball trail effects and spark particles on bounces
+- Animated starfield background with parallax layers
+- Screen shake on impacts
+- Smooth state transitions (countdown, level complete, game over)
+- Custom font (Orbitron from Google Fonts)
 
-| Icon | Name | Effect |
-|---|---|---|
-| **M** | Multi-Ball | Spawns 2 extra balls |
-| **W** | Wide Paddle | 50% wider paddle for 10 seconds |
-| **S** | Speed Ball | 40% faster ball for 10 seconds |
-| **+** | Extra Life | Adds one life (max 5) |
+### Technical
+- Fixed-timestep game loop (60Hz physics) with accumulator pattern
+- Object-pooled particle system (600 particles)
+- AABB collision detection with side determination
+- Paddle hit position affects ball angle
+- Clean separation: Constants, Audio Engine, Particle System, Game Objects, Level Definitions, Input Handler, Game Engine, Renderer
+- Pure vanilla JavaScript — no frameworks, no build tools, no npm
+- Single HTML file — fully self-contained
 
-## Tech Stack
+## Screenshots
 
-- HTML5 Canvas for rendering
-- Vanilla JavaScript (ES6+, strict mode)
-- Web Audio API for procedural sound
-- Google Fonts (Orbitron, Rajdhani)
-- Fixed-timestep game loop with requestAnimationFrame
-- Object-pooled particle system (500 particles)
+To take a screenshot:
+1. Open the game in your browser
+2. Use your OS screenshot tool (or browser DevTools > Capture screenshot)
+3. Save as `screenshot.png` in the project root
 
 ## File Structure
 
 ```
-├── index.html          # Complete game (single file)
-├── Breakout_v1.0.py    # Original Python/Pygame version
-├── CODE_REVIEW.md      # Detailed code review and changelog
-└── README.md           # This file
+├── index.html         # Complete game (HTML + CSS + JS)
+├── Breakout_v1.0.py   # Original Pygame prototype
+├── CODE_REVIEW.md     # Detailed code review and feature documentation
+├── README.md          # This file
+└── CLAUDE.md          # Agent instructions
 ```
 
-## Browser Support
+## Credits
 
-Works in all modern browsers (Chrome, Firefox, Safari, Edge). Requires JavaScript enabled and Web Audio API support.
+Original game design by Oliver (oliver@devtron.pro).
+Rewritten as HTML5 Canvas with modern features and neon arcade aesthetic.
